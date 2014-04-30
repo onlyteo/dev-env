@@ -2,18 +2,22 @@
 	name = Teo
 	email = onlyteo@live.com
 [alias]
+	a = add
+	aa = add --all
 	co = checkout
 	ci = commit
 	cim = commit -m
 	br = branch
+	bru = branch -u origin/\"$(git rev-parse --abbrev-ref HEAD)\"
 	st = status
 	sts = status -s
 	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
-	graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit --date=relative
-	gr = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit --date=relative -n30
+	graph = log --graph --pretty=format:\"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset\" --abbrev-commit --date=relative
+	gr = log --graph --pretty=format:\"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset\" --abbrev-commit --date=relative -n30
 	nice = log --all --graph --decorate --oneline
 	type = cat-file -t
 	dump = cat-file -p
+	fi = flow init
 	ff = flow feature
 	ffs = flow feature start
 	fff = flow feature finish
