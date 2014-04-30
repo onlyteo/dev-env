@@ -1,0 +1,29 @@
+[user]
+	name = Teo
+	email = onlyteo@live.com
+[alias]
+	co = checkout
+	ci = commit
+	cim = commit -m
+	br = branch
+	st = status
+	sts = status -s
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+	graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit --date=relative
+	gr = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset' --abbrev-commit --date=relative -n30
+	nice = log --all --graph --decorate --oneline
+	type = cat-file -t
+	dump = cat-file -p
+	ff = flow feature
+	ffs = flow feature start
+	fff = flow feature finish
+	ffp = flow feature publish
+
+[giggle]
+	main-window-maximized = true
+	main-window-geometry = 0x0+0+0
+	main-window-view = FileView
+	history-view-vpane-position = 613
+	file-view-vpane-position = 663
+[push]
+	default = simple
