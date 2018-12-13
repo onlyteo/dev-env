@@ -23,6 +23,7 @@
 	ffs = flow feature start
 	fff = flow feature finish
 	ffp = flow feature publish
+	teo = !git config user.name "Teo" && git config user.email "onlyteo@live.com"
 [core]
 	autocrlf = input
 	longpaths = true
