@@ -15,7 +15,7 @@ source ${SCRIPT_DIR}/repos.sh
 # Function for handling script exit
 #
 on_exit() {
-   cd ${CURRENT_DIR}
+   cd "${CURRENT_DIR}"
 }
 
 #
@@ -96,7 +96,7 @@ pull_repo() {
       return
    fi
 
-   cd ${REPO_DIR}
+   cd "${REPO_DIR}"
 
    if [ ! git status > /dev/null 2>&1 ]; then
       log_warn "Directory ${REPO_DIR} is not a Git repository"
