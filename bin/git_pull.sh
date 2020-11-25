@@ -189,6 +189,16 @@ pull_repos() {
 
 trap 'on_exit' EXIT
 
+if [ ! -f ${SCRIPT_DIR}/repos.sh ]; then
+   log_error "No repos script found"
+   exit 1
+fi
+
+if [ -z "${REPOS}" ]; then
+   log_error "No repos defined in script file"
+   exit 1
+fi
+
 # Parse scipt arguments
 parse_args "$@"
 
