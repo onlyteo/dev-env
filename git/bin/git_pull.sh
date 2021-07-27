@@ -4,8 +4,8 @@ CURRENT_DIR="${PWD}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 APPLICATION=""
-UNDO=false
 BRANCH=""
+UNDO=false
 VERBOSE=false
 
 source ${SCRIPT_DIR}/common.sh
@@ -22,14 +22,16 @@ on_exit() {
 # Function for printing script usage information
 #
 usage() {
-   echo "Usage: pull [all] [-h|--help] [-v|--verbose] [-u|--undo] [-d|--develop]"
+   echo "Usage: pull [-h|--help] [-v|--verbose] [-u|--undo] [-d|--develop] [-b|--branch <branch>] [-a|--application <application>] [--all]"
    echo -e "\nArguments:"
-   echo -e "\t-h or --help\t\tPrint this help."
-   echo -e "\t-v or --verbose\t\tPrint verbose information."
-   echo -e "\t-u or --undo\t\tReset any changes made in all repositories. WARNING: Your changes will be lost!"
-   echo -e "\t-d or --develop\t\tWill checkout the develop branch in all repositories."
-   echo -e "\t-m or --master\t\tWill checkout the master branch in all repositories."
-   echo -e "\t-b <branch> or --branch <branch>\t\tWill checkout the <branch> branch in all repositories."
+   echo -e "\t-h or --help\t\t\t\t\t\tPrint this help."
+   echo -e "\t-v or --verbose\t\t\t\t\t\tPrint verbose information."
+   echo -e "\t-u or --undo\t\t\t\t\t\tReset any changes made in all repositories. WARNING: Your changes will be lost!"
+   echo -e "\t-d or --develop\t\t\t\t\t\tWill checkout the develop branch in all repositories."
+   echo -e "\t-m or --master\t\t\t\t\t\tWill checkout the master branch in all repositories."
+   echo -e "\t-b <branch> or --branch <branch>\t\t\tWill checkout the <branch> branch in all repositories."
+   echo -e "\t-a <application> or --application <application>\t\tWill set which application repositories to pull."
+   echo -e "\t--all\t\t\t\t\t\t\tWill pull all repositories for all applications."
 }
 
 #
@@ -50,9 +52,19 @@ parse_args() {
             UNDO=true
             ;;
          -d | --develop)
+            if [ -n "${BRANCH}" ]; then
+               log_error "Branch already specified"
+               usage
+               exit 1
+            fi
             BRANCH="develop"
             ;;
          -m | --master)
+            if [ -n "${BRANCH}" ]; then
+               log_error "Branch already specified"
+               usage
+               exit 1
+            fi
             BRANCH="master"
             ;;
          -b | --branch)
@@ -64,8 +76,27 @@ parse_args() {
                exit 1
             fi
             ;;
-         all)
-            APPLICATION="${param}"
+         --all)
+            if [ -n "${APPLICATION}" ]; then
+               log_error "Application already specified"
+               usage
+               exit 1
+            fi
+            APPLICATION="PULL_ALL_APPLICATIONS"
+            ;;
+         -a | --application)
+            if [ -n "${APPLICATION}" ]; then
+               log_error "Application already specified"
+               usage
+               exit 1
+            fi
+            shift
+            APPLICATION="$1"
+            if [ -z "${APPLICATION}" ]; then
+               log_error "Application not specified when using -a/--application argument"
+               usage
+               exit 1
+            fi
             ;;
          *)
             log_error "Unknown parameter \"${param}\""
@@ -167,16 +198,27 @@ pull_repos() {
    # Select list of repos based on user input
    case "${APPLICATION}" in
 
-      "all")
-      log_info "Pulling all repositories"
+      "PULL_ALL_APPLICATIONS")
+      log_info "Pulling all repositories for all applications"
       repos=( ${REPOS[@]} )
       ;;
 
       *)
-      usage
-      exit 1
+      log_info "Pulling repositories for application \"${APPLICATION}\""
+      for repo in "${REPOS[@]}"
+      do
+         if [[ "${repo}" =~ ^"${APPLICATION}"\/.+$ ]]; then
+            repos+=("${repo}")
+         fi
+      done
       ;;
    esac
+
+   # Check if repo list is empty
+   if [ ${#repos[@]} -eq 0 ]; then
+      log_error "No repositories selected"
+      exit 1
+   fi
 
    # Loop through list of repos and pull each
    for repo in "${repos[@]}"
@@ -188,16 +230,6 @@ pull_repos() {
 }
 
 trap 'on_exit' EXIT
-
-if [ ! -f ${SCRIPT_DIR}/repos.sh ]; then
-   log_error "No repos script found"
-   exit 1
-fi
-
-if [ -z "${REPOS}" ]; then
-   log_error "No repos defined in script file"
-   exit 1
-fi
 
 # Parse scipt arguments
 parse_args "$@"

@@ -19,8 +19,10 @@ on_exit() {
 usage() {
    echo "Usage: clone [all] [-h|--help] [-v|--verbose]"
    echo -e "\nArguments:"
-   echo -e "\t-h or --help\t\tPrint this help."
-   echo -e "\t-v or --verbose\t\tPrint verbose information."
+   echo -e "\t-h or --help\t\t\t\t\t\tPrint this help."
+   echo -e "\t-v or --verbose\t\t\t\t\t\tPrint verbose information."
+   echo -e "\t-a <application> or --application <application>\t\tWill set which application repositories to clone."
+   echo -e "\t--all\t\t\t\t\t\t\tWill clone all repositories for all applications."
 }
 
 #
@@ -37,8 +39,27 @@ parse_args() {
          -v | --verbose)
             VERBOSE=true
             ;;
-         all)
-            APPLICATION="${param}"
+         --all)
+            if [ -n "${APPLICATION}" ]; then
+               log_error "Application already specified"
+               usage
+               exit 1
+            fi
+            APPLICATION="PULL_ALL_APPLICATIONS"
+            ;;
+         -a | --application)
+            if [ -n "${APPLICATION}" ]; then
+               log_error "Application already specified"
+               usage
+               exit 1
+            fi
+            shift
+            APPLICATION="$1"
+            if [ -z "${APPLICATION}" ]; then
+               log_error "Application not specified when using -a/--application argument"
+               usage
+               exit 1
+            fi
             ;;
          *)
             log_error "Unknown parameter \"${param}\""
@@ -92,14 +113,18 @@ clone_repos() {
    # Select list of repos based on user input
    case "${APPLICATION}" in
 
-      "all")
-      log_info "Cloning all repositories"
+      "PULL_ALL_APPLICATIONS")
+      log_info "Cloning all repositories for all applications"
       repos=( ${REPOS[@]} )
       ;;
-
       *)
-      usage
-      exit 1
+      log_info "Cloning repositories for application \"${APPLICATION}\""
+      for repo in "${REPOS[@]}"
+      do
+         if [[ "${repo}" =~ ^"${APPLICATION}"\/.+$ ]]; then
+            repos+=("${repo}")
+         fi
+      done
       ;;
    esac
 
@@ -113,16 +138,6 @@ clone_repos() {
 }
 
 trap 'on_exit' EXIT
-
-if [ ! -f ${SCRIPT_DIR}/repos.sh ]; then
-   log_error "No repos script found"
-   exit 1
-fi
-
-if [ -z "${REPOS}" ]; then
-   log_error "No repos defined in script file"
-   exit 1
-fi
 
 # Parse scipt arguments
 parse_args "$@"
