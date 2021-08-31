@@ -3,12 +3,13 @@
 CURRENT_DIR="${PWD}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-APPLICATION=""
+PROJECT=""
 BRANCH=""
 UNDO=false
 VERBOSE=false
 
-source ${SCRIPT_DIR}/common.sh
+source ${SCRIPT_DIR}/../../common/bin/logging.sh
+source ${SCRIPT_DIR}/../../common/bin/dirs.sh
 source ${SCRIPT_DIR}/repos.sh
 
 #
@@ -21,8 +22,8 @@ on_exit() {
 #
 # Function for printing script usage information
 #
-usage() {
-   echo "Usage: pull [-h|--help] [-v|--verbose] [-u|--undo] [-d|--develop] [-b|--branch <branch>] [-a|--application <application>] [--all]"
+print_usage() {
+   echo "Usage: pull [-h|--help] [-v|--verbose] [-u|--undo] [-d|--develop] [-b|--branch <branch>] [-p|--project <project>] [--all]"
    echo -e "\nArguments:"
    echo -e "\t-h or --help\t\t\t\t\t\tPrint this help."
    echo -e "\t-v or --verbose\t\t\t\t\t\tPrint verbose information."
@@ -30,8 +31,8 @@ usage() {
    echo -e "\t-d or --develop\t\t\t\t\t\tWill checkout the develop branch in all repositories."
    echo -e "\t-m or --master\t\t\t\t\t\tWill checkout the master branch in all repositories."
    echo -e "\t-b <branch> or --branch <branch>\t\t\tWill checkout the <branch> branch in all repositories."
-   echo -e "\t-a <application> or --application <application>\t\tWill set which application repositories to pull."
-   echo -e "\t--all\t\t\t\t\t\t\tWill pull all repositories for all applications."
+   echo -e "\t-p <project> or --project <project>\t\tWill set which project repositories to pull."
+   echo -e "\t--all\t\t\t\t\t\t\tWill pull all repositories for all projects."
 }
 
 #
@@ -42,7 +43,7 @@ parse_args() {
       param="$1"
       case ${param} in
          -h | --help)
-            usage
+            print_usage
             exit 0
             ;;
          -v | --verbose)
@@ -54,7 +55,7 @@ parse_args() {
          -d | --develop)
             if [ -n "${BRANCH}" ]; then
                log_error "Branch already specified"
-               usage
+               print_usage
                exit 1
             fi
             BRANCH="develop"
@@ -62,7 +63,7 @@ parse_args() {
          -m | --master)
             if [ -n "${BRANCH}" ]; then
                log_error "Branch already specified"
-               usage
+               print_usage
                exit 1
             fi
             BRANCH="master"
@@ -72,35 +73,35 @@ parse_args() {
             BRANCH="$1"
             if [ -z "${BRANCH}" ]; then
                log_error "Branch not specified when using -b/--branch argument"
-               usage
+               print_usage
                exit 1
             fi
             ;;
          --all)
-            if [ -n "${APPLICATION}" ]; then
+            if [ -n "${PROJECT}" ]; then
                log_error "Application already specified"
-               usage
+               print_usage
                exit 1
             fi
-            APPLICATION="PULL_ALL_APPLICATIONS"
+            PROJECT="_ALL_PROJECTS"
             ;;
-         -a | --application)
-            if [ -n "${APPLICATION}" ]; then
+         -p | --project)
+            if [ -n "${PROJECT}" ]; then
                log_error "Application already specified"
-               usage
+               print_usage
                exit 1
             fi
             shift
-            APPLICATION="$1"
-            if [ -z "${APPLICATION}" ]; then
-               log_error "Application not specified when using -a/--application argument"
-               usage
+            PROJECT="$1"
+            if [ -z "${PROJECT}" ]; then
+               log_error "Application not specified when using -p/--project argument"
+               print_usage
                exit 1
             fi
             ;;
          *)
             log_error "Unknown parameter \"${param}\""
-            usage
+            print_usage
             exit 1
             ;;
       esac
@@ -109,7 +110,7 @@ parse_args() {
 }
 
 #
-# Function for pulling one of the repos for an application
+# Function for pulling one of the repos for an project
 #
 pull_repo() {
    repo="$1"
@@ -120,7 +121,7 @@ pull_repo() {
       exit 1
    fi
 
-   REPO_DIR="${REPO_ROOT_DIR}/${repo}"
+   REPO_DIR="${WORKSPACE_DIR}/${repo}"
 
    if [ ! -d "${REPO_DIR}" ]; then
       log_warn "Repository directory ${REPO_DIR} does not exist"
@@ -190,24 +191,24 @@ pull_repo() {
 }
 
 #
-# Function for pulling all repos for an application
+# Function for pulling all repos for a project
 #
 pull_repos() {
    repos=()
 
    # Select list of repos based on user input
-   case "${APPLICATION}" in
+   case "${PROJECT}" in
 
-      "PULL_ALL_APPLICATIONS")
-      log_info "Pulling all repositories for all applications"
-      repos=( ${REPOS[@]} )
+      "_ALL_PROJECTS")
+      log_info "Pulling all repositories for all projects"
+      repos=( ${GIT_REPOS[@]} )
       ;;
 
       *)
-      log_info "Pulling repositories for application \"${APPLICATION}\""
-      for repo in "${REPOS[@]}"
+      log_info "Pulling repositories for project \"${PROJECT}\""
+      for repo in "${GIT_REPOS[@]}"
       do
-         if [[ "${repo}" =~ ^"${APPLICATION}"\/.+$ ]]; then
+         if [[ "${repo}" =~ ^"${PROJECT}"\/.+$ ]]; then
             repos+=("${repo}")
          fi
       done
@@ -216,7 +217,7 @@ pull_repos() {
 
    # Check if repo list is empty
    if [ ${#repos[@]} -eq 0 ]; then
-      log_error "No repositories selected"
+      log_error "Repository list is empty"
       exit 1
    fi
 
@@ -234,8 +235,13 @@ trap 'on_exit' EXIT
 # Parse scipt arguments
 parse_args "$@"
 
-if [ -z "${APPLICATION}" ]; then
-   usage
+if [ -z "${PROJECT}" ]; then
+   print_usage
+   exit 1
+fi
+
+if [ -z "${GIT_REPOS}" ]; then
+   log_error "Repository list is not defined"
    exit 1
 fi
 
