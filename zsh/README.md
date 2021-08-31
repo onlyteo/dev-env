@@ -24,6 +24,21 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 ```
 
 ### 5. Modify ZSH config
+Set `ZSH_THEME="powerlevel10k/powerlevel10k"` in `~/.zshrc`.
+
+Restart Zsh. When starting the shell you will be presented with the config setup dialog for the powerlevel10k theme. If that does not happen then you can start it manually with `p10k configure`.
+
+Add username and hostname to the prompt by editing the `~/.p10k.zsh` and appending the `POWERLEVEL9K_LEFT_PROMPT_ELEMENTS` variable to contain the `context` field:
+```bash
+typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
+    os_icon                 # os identifier
+    context                 # username@hostname
+    dir                     # current directory
+    vcs                     # git status
+    prompt_char             # prompt symbol
+  )
+
+```
 
 ### 6. Add custom font
 ```bash

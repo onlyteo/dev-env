@@ -1,7 +1,12 @@
 #!/bin/bash
 
+SCRIPT_FILE="$0"
+if [ -L "${SCRIPT_FILE}" ]; then
+   SCRIPT_DIR="$(dirname "$(readlink -f "${SCRIPT_FILE}")")"
+else
+   SCRIPT_DIR="$(cd "$(dirname "${SCRIPT_FILE}")" && pwd)"
+fi
 CURRENT_DIR="${PWD}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 PROJECT=""
 BRANCH=""
