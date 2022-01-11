@@ -13,7 +13,11 @@ VERBOSE=false
 
 source ${SCRIPT_DIR}/../../common/bin/logging.sh
 source ${SCRIPT_DIR}/../../common/bin/dirs.sh
-source ${SCRIPT_DIR}/repos.sh
+if [ -f ${SCRIPT_DIR}/custom_repos.sh ]; then
+   source ${SCRIPT_DIR}/custom_repos.sh
+else
+   source ${SCRIPT_DIR}/repos.sh
+fi
 
 #
 # Function for handling script exit
