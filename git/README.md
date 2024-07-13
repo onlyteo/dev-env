@@ -9,6 +9,7 @@
 	a = add
 	aa = add --all
 	co = checkout
+	cob = checkout -b
 	ci = commit
 	cia = commit --amend
 	cian = commit --amend --no-edit
@@ -22,12 +23,7 @@
 	lol = log --all --graph --decorate --date=format:\"%Y-%m-%d %H:%M:%S\" --pretty=format:\"%C(yellow)%h%Creset %C(auto)%d%Creset %s %C(cyan)[%an <%ae> (%cn <%ce>) %cd]%Creset\" --abbrev-commit
 	undo = checkout -- .
 	unstage = reset --
-	fi = flow init
-	ff = flow feature
-	ffs = flow feature start
-	fff = flow feature finish
-	ffp = flow feature publish
-	teo = !git config user.name "Teo" && git config user.email "onlyteo@live.com"
+	user = !git config user.name "Teo" && git config user.email "onlyteo@live.com"
 [core]
 	autocrlf = input
 	longpaths = true
