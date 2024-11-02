@@ -1,6 +1,6 @@
 # Common Tools
 
-### 1. Install command line tools
-```bash
-sudo apt install build-essential dkms ssh vim zip unzip curl wget net-tools apt-transport-https tar bzip2 gzip git gpg
+### 1. Install common CLI tools
+```shell
+sudo apt install -y tar bzip2 gzip gpg ssh vim zip unzip curl wget build-essential dkms net-tools ca-certificates apt-transport-https
 ```

@@ -1,16 +1,17 @@
 # NVM
 
 ### 1. Install NVM
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+```shell
+export NVM_VERSION=v0.39.7
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 ```
 
 ### 2. Install Node and NPM
-```bash
+```shell
 nvm install 22
 ```
 
 ### 3. Install Yarn
-```bash
+```shell
 npm install --global yarn
 ```
