@@ -36,6 +36,7 @@ sudo apt install -y git
     excludesfile = ~/.gitignore_global
 [push]
     default = simple
+    autoSetupRemote = true
 [fetch]
     prune = true
 ```
