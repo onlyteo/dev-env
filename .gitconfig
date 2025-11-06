@@ -12,6 +12,8 @@
     cim = commit -m
     cl = clone
     br = branch
+    brd = branch -d
+    brdd = branch -D
     bru = branch -u origin/\"$(git rev-parse --abbrev-ref HEAD)\"
     st = status
     sts = status -s
@@ -19,6 +21,7 @@
     ll = log --all --graph --decorate --date=format:\"%Y-%m-%d %H:%M:%S\" --pretty=format:\"%C(yellow)%h%Creset %C(auto)%d%Creset %s %C(cyan)[%an <%ae> (%cn <%ce>) %cd]%Creset\" --abbrev-commit
     undo = checkout -- .
     unstage = reset --
+    purge = !git reset -- && git checkout -- .
 [core]
     autocrlf = input
     longpaths = true
