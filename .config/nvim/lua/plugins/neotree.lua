@@ -7,15 +7,17 @@ return {
     "nvim-tree/nvim-web-devicons"
   },
   lazy = false,
-  opts = {
-    filesystem = {
-      filtered_items = {
-        visible = true,
-        hide_dotfiles = false
-      }
-    }
-  },
   config = function()
+    require("neo-tree").setup({
+      filesystem = {
+        filtered_items = {
+          visible = true,
+          hide_dotfiles = false,
+          hide_gitignored = true,
+          show_hidden_count = true
+        }
+      }
+    })
     vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>")
   end
 }
