@@ -5,7 +5,7 @@ return {
   build = ":TSUpdate",
   config = function()
     -- Tree Sitter parsers
-    local treesitter_parsers = {
+    local parsers = {
       "lua",
       "rust",
       "java",
@@ -24,11 +24,11 @@ return {
     }
 
     -- Setup Tree Sitter
-    local treesitter = require("nvim-treesitter.configs")
-    treesitter.setup({
+    local plugin = require("nvim-treesitter.configs")
+    plugin.setup({
       sync_install = false,
       auto_install = true,
-      ensure_installed = treesitter_parsers,
+      ensure_installed = parsers,
       highlight = { enable = true },
       indent = { enable = true }
     })

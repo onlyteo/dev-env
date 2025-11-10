@@ -8,7 +8,8 @@ return {
   },
   lazy = false,
   config = function()
-    require("neo-tree").setup({
+    local plugin = require("neo-tree")
+    plugin.setup({
       filesystem = {
         filtered_items = {
           visible = true,
