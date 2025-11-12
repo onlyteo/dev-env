@@ -1,0 +1,5 @@
+# NeoVim
+lazy-lock.json
+
+# Tmux
+/tmux/plugins/
