@@ -2,9 +2,9 @@ return {
     {
         "neovim/nvim-lspconfig",
         config = function()
-            local plugin = require("mason")
-            plugin.setup({
-            })
+            local plugin = require("lspconfig")
+            plugin.setup()
+            vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
         end
     },
     {
