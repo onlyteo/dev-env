@@ -22,7 +22,7 @@ return {
             "bash",
             "markdown"
         }
-        
+
         -- Setup Tree Sitter
         local plugin = require("nvim-treesitter.configs")
         plugin.setup({
